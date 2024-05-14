@@ -4,8 +4,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls,
-  SynEdit, SynHighlighterPas, SynHighlighterXML, SynHighlighterCpp, LCLType,
-  IniFiles;
+  SynEdit, SynHighlighterPas, SynHighlighterXML, SynHighlighterCpp,
+  SynHighlighterMulti, SynHighlighterAny, LCLType, IniFiles, process;
 
 
 Const
@@ -24,6 +24,11 @@ type
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    miCompile: TMenuItem;
+    miRun: TMenuItem;
+    miCompilerOptions: TMenuItem;
     miSelectFont: TMenuItem;
     Separator5: TMenuItem;
     miSynHi: TMenuItem;
@@ -50,6 +55,7 @@ type
     Separator1: TMenuItem;
     sbBar: TStatusBar;
     seTextField: TSynEdit;
+    SynAnySyn1: TSynAnySyn;
     SynCppSyn1: TSynCppSyn;
     SynPasSyn1: TSynPasSyn;
     SynXMLSyn1: TSynXMLSyn;
@@ -57,6 +63,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure miCompilerOptionsClick(Sender: TObject);
     procedure miCopyClick(Sender: TObject);
     procedure miCutClick(Sender: TObject);
     procedure miExitClick(Sender: TObject);
@@ -110,6 +117,8 @@ var
 
 
 implementation
+uses
+  CompilerOpt;
 
 {$R *.lfm}
 
@@ -180,6 +189,9 @@ begin
   if (UpperCase(FileExtansion) = '.XML') then
    seTextField.Highlighter:= SynXMLSyn1;
 
+  if (UpperCase(FileExtansion) = '.ASM') then
+   seTextField.Highlighter:= SynAnySyn1;
+
   miSynHi.Checked:= True;
 
   SaveUserSettings();
@@ -211,6 +223,11 @@ end;
 procedure TForm1.FormResize(Sender: TObject);
 begin
   SaveUserSettings();
+end;
+
+procedure TForm1.miCompilerOptionsClick(Sender: TObject);
+begin
+  Form2.ShowModal;
 end;
 
 procedure TForm1.miCopyClick(Sender: TObject);
@@ -464,6 +481,7 @@ begin
   SynPasSyn1.Enabled:= miSynHi.Checked;
   SynCppSyn1.Enabled:= miSynHi.Checked;
   SynXMLSyn1.Enabled:= miSynHi.Checked;
+  SynAnySyn1.Enabled:= miSynHi.Checked;
 
   if (not miSynHi.Checked) then
    begin
