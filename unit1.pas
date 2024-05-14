@@ -63,6 +63,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure miCompileClick(Sender: TObject);
     procedure miCompilerOptionsClick(Sender: TObject);
     procedure miCopyClick(Sender: TObject);
     procedure miCutClick(Sender: TObject);
@@ -97,6 +98,8 @@ const
 
   msgWRN01 = 'Document was modified!' + #10#13 +
              'Would you like to save this document now?';
+
+  msgERR01 = 'You must first complete compiler path and params.';
 
 var
   //Main form
@@ -223,6 +226,65 @@ end;
 procedure TForm1.FormResize(Sender: TObject);
 begin
   SaveUserSettings();
+end;
+
+procedure TForm1.miCompileClick(Sender: TObject);
+var
+  Ini: TIniFile;
+  Compiler: String;
+  CompilerPath: String;
+  Params: String;
+  Param: String;
+  OutMsg: TStringList;
+  hProcess: TProcess;
+  ParamList: TStringArray;
+  i: Integer;
+begin
+  Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
+
+  CompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
+
+  //Get compiler params
+  Params:= LowerCase(Ini.ReadString('COMPILER', 'Params', ''));
+
+  Ini.Destroy;
+
+  //Check if all compiler params are filled
+  if (CompilerPath = '') or (Params = '') then
+   begin
+     MessageDlg('Error', msgERR01, mtError, [mbOK], 0);
+     Exit;
+   end;
+
+  //If path to compiler is correct
+  if FileExists(CompilerPath) then
+   begin
+     hProcess:= TProcess.Create(NIL);
+     OutMsg:= TStringList.Create();
+
+     Compiler:= ExtractFileName(CompilerPath);
+     CompilerPath:= ExtractFilePath(CompilerPath);
+
+     Params:= StringReplace(Params, '$(sourcefile)', FileDirectory, [rfIgnoreCase]);
+
+     Params:= StringReplace(Params, '$(sourcefilename)', ExtractFilePath(FileDirectory) + ChangeFileExt(ExtractFileName(FileDirectory), ''), [rfIgnoreCase]);
+
+     ParamList:= Params.Split(' ');
+
+     hProcess.Executable:= CompilerPath + Compiler;
+
+     for i:= 0 to High(ParamList) do
+      hProcess.Parameters.Add(ParamList[i]);
+
+     hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
+     hProcess.Execute;
+
+     OutMsg.LoadFromStream(hProcess.Output);
+     ShowMessage(OutMsg.Text);
+
+     hProcess.Destroy;
+     OutMsg.Destroy;
+   end;
 end;
 
 procedure TForm1.miCompilerOptionsClick(Sender: TObject);

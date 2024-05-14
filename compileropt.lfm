@@ -1,0 +1,81 @@
+object Form2: TForm2
+  Left = 342
+  Height = 202
+  Top = 250
+  Width = 504
+  BorderStyle = bsSizeToolWin
+  Caption = 'Compiler options'
+  ClientHeight = 202
+  ClientWidth = 504
+  Constraints.MaxHeight = 202
+  Constraints.MinHeight = 202
+  Constraints.MinWidth = 504
+  OnCreate = FormCreate
+  Position = poScreenCenter
+  object Label1: TLabel
+    Left = 16
+    Height = 17
+    Top = 16
+    Width = 131
+    Caption = 'Compiler directory:'
+  end
+  object edtCompiler: TEdit
+    Left = 8
+    Height = 34
+    Top = 36
+    Width = 394
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 0
+  end
+  object btnSelect: TButton
+    Left = 413
+    Height = 34
+    Top = 36
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Select'
+    TabOrder = 1
+    OnClick = btnSelectClick
+  end
+  object Label2: TLabel
+    Left = 16
+    Height = 17
+    Top = 88
+    Width = 55
+    Anchors = [akLeft]
+    Caption = 'Params:'
+  end
+  object btnCancel: TButton
+    Left = 8
+    Height = 33
+    Top = 157
+    Width = 96
+    Anchors = [akLeft, akBottom]
+    Caption = 'Cancel'
+    TabOrder = 2
+    OnClick = btnCancelClick
+  end
+  object bntOK: TButton
+    Left = 392
+    Height = 33
+    Top = 157
+    Width = 96
+    Anchors = [akRight, akBottom]
+    Caption = 'OK'
+    TabOrder = 3
+    OnClick = bntOKClick
+  end
+  object edtParams: TEdit
+    Left = 8
+    Height = 34
+    Top = 104
+    Width = 480
+    Anchors = [akLeft, akRight]
+    TabOrder = 4
+  end
+  object dOpen: TOpenDialog
+    Filter = 'Windows executable|*.exe|All files|*.*'
+    Left = 136
+    Top = 152
+  end
+end

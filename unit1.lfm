@@ -617,6 +617,7 @@ object Form1: TForm1
       Caption = 'Run'
       object miCompile: TMenuItem
         Caption = 'Compile'
+        OnClick = miCompileClick
       end
       object miRun: TMenuItem
         Caption = 'Compile and Run'
