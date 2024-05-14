@@ -4,12 +4,16 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ComCtrls,
-  SynEdit, SynHighlighterPas, SynHighlighterXML, SynHighlighterCpp, LCLType;
+  SynEdit, SynHighlighterPas, SynHighlighterXML, SynHighlighterCpp, LCLType,
+  IniFiles;
 
 
 Const
   APP_VER   = 'ver 1.0';
-  APP_TITLE = 'Notepad by Konrad Kluczewski';
+  APP_TITLE = 'DevNotepad by Konrad Kluczewski';
+
+  //User settings filename
+  USER_SETTINGS_FILENAME = 'Settings.ini';
 
 type
 
@@ -49,7 +53,10 @@ type
     SynCppSyn1: TSynCppSyn;
     SynPasSyn1: TSynPasSyn;
     SynXMLSyn1: TSynXMLSyn;
+    procedure FormChangeBounds(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure miCopyClick(Sender: TObject);
     procedure miCutClick(Sender: TObject);
     procedure miExitClick(Sender: TObject);
@@ -70,6 +77,8 @@ type
   private
      procedure SetupStatusCursor();
      procedure SetupHighlighter();
+     procedure LoadUserSettings();
+     procedure SaveUserSettings();
   public
 
   end;
@@ -83,12 +92,19 @@ const
              'Would you like to save this document now?';
 
 var
-  Form1: TForm1;
+  //Main form
+  Form1         : TForm1;
+
+  //User settings
+  UserSettings  : TIniFile;
+
+  //Root directory
+  RootDirectory : String;
 
   //Document file directory
   FileDirectory : String;
   //File extansion
-  FileExtansion  : String;
+  FileExtansion : String;
   //Is modified
   Modified      : Boolean;
 
@@ -98,6 +114,55 @@ implementation
 {$R *.lfm}
 
 { TForm1 }
+
+procedure TForm1.LoadUserSettings();
+begin
+  UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
+
+  if FileDirectory = '' then
+   begin
+     dOpen.InitialDir:= UserSettings.ReadString('SETTINGS', 'LastDir', '');
+     dSave.InitialDir:= UserSettings.ReadString('SETTINGS', 'LastDir', '');
+   end;
+
+  miSynHi.Checked:= UserSettings.ReadBool('SETTINGS', 'SyntaxHighlighting', False);
+
+  Left:= UserSettings.ReadInteger('WINDOW', 'Left', 256);
+  Top:= UserSettings.ReadInteger('WINDOW', 'Top', 256);
+  Width:= UserSettings.ReadInteger('WINDOW', 'Width', 1000);
+  Height:= UserSettings.ReadInteger('WINDOW', 'Height', 600);
+
+  seTextField.Font.Name:= UserSettings.ReadString('FONT', 'FontName', '');
+  seTextField.Font.Size:= UserSettings.ReadInteger('FONT', 'FontSize', 10);
+  seTextField.Font.Color:= UserSettings.ReadInteger('FONT', 'FontColor', clSilver);
+  seTextField.Font.Bold:= UserSettings.ReadBool('FONT', 'FontBold', False);
+  seTextField.Font.Italic:= UserSettings.ReadBool('FONT', 'FontItalic', False);
+  seTextField.Font.Underline:= UserSettings.ReadBool('FONT', 'FontUnderline', False);
+
+  UserSettings.Destroy();
+end;
+
+procedure TForm1.SaveUserSettings();
+begin
+  UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
+
+  UserSettings.WriteString('SETTINGS', 'LastDir', ExtractFilePath(FileDirectory));
+  UserSettings.WriteBool('SETTINGS', 'SyntaxHighlighting', miSynHi.Checked);
+
+  UserSettings.WriteInteger('WINDOW', 'Left', Left);
+  UserSettings.WriteInteger('WINDOW', 'Top', Top);
+  UserSettings.WriteInteger('WINDOW', 'Width', Width);
+  UserSettings.WriteInteger('WINDOW', 'Height', Height);
+
+  UserSettings.WriteString('FONT', 'FontName', seTextField.Font.Name);
+  UserSettings.WriteInteger('FONT', 'FontSize', seTextField.Font.Size);
+  UserSettings.WriteInteger('FONT', 'FontColor', seTextField.Font.Color);
+  UserSettings.WriteBool('FONT', 'FontBold', seTextField.Font.Bold);
+  UserSettings.WriteBool('FONT', 'FontItalic', seTextField.Font.Italic);
+  UserSettings.WriteBool('FONT', 'FontUnderline', seTextField.Font.Underline);
+
+  UserSettings.Destroy();
+end;
 
 procedure TForm1.SetupStatusCursor();
 begin
@@ -116,6 +181,8 @@ begin
    seTextField.Highlighter:= SynXMLSyn1;
 
   miSynHi.Checked:= True;
+
+  SaveUserSettings();
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -123,6 +190,27 @@ begin
   Caption:= APP_TITLE + ' ' + APP_VER;
   FileDirectory:= '';
   Modified:= False;
+
+  RootDirectory:= ExtractFilePath(Application.ExeName);
+  if FileExists(RootDirectory + USER_SETTINGS_FILENAME) then
+   begin
+     LoadUserSettings();
+   end;
+end;
+
+procedure TForm1.FormChangeBounds(Sender: TObject);
+begin
+  SaveUserSettings();
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  SaveUserSettings();
+end;
+
+procedure TForm1.FormResize(Sender: TObject);
+begin
+  SaveUserSettings();
 end;
 
 procedure TForm1.miCopyClick(Sender: TObject);
@@ -238,6 +326,8 @@ begin
                  FileExtansion:= ExtractFileExt(FileDirectory);
                  SetupHighlighter();
                  seTextField.Lines.LoadFromFile(FileDirectory);
+
+                 SaveUserSettings();
                end;
 
               Modified:= False;
@@ -260,6 +350,8 @@ begin
               SetupStatusCursor();
               sbBar.Panels[1].Text:= '';
               sbBar.Panels[2].Text:= FileDirectory;
+
+              SaveUserSettings();
             end;
          end;
 
@@ -282,6 +374,8 @@ begin
         SetupStatusCursor();
         sbBar.Panels[1].Text:= '';
         sbBar.Panels[2].Text:= FileDirectory;
+
+        SaveUserSettings();
       end;
    end;
 end;
@@ -308,6 +402,8 @@ begin
      Modified:= False;
      sbBar.Panels[1].Text:= '';
      sbBar.Panels[2].Text:= FileDirectory;
+
+     SaveUserSettings();
    end;
 end;
 
@@ -325,6 +421,8 @@ begin
         Modified:= False;
         sbBar.Panels[1].Text:= '';
         sbBar.Panels[2].Text:= FileDirectory;
+
+        SaveUserSettings();
       end;
    end
   else
@@ -344,9 +442,13 @@ end;
 
 procedure TForm1.miSelectFontClick(Sender: TObject);
 begin
+  dFont.Font:= seTextField.Font;
+
   if dFont.Execute then
    begin
      seTextField.Font:= dFont.Font;
+
+     SaveUserSettings();
    end;
 end;
 
@@ -371,6 +473,8 @@ begin
    begin
      SetupHighlighter();
    end;
+
+  SaveUserSettings();
 end;
 
 procedure TForm1.miUndoClick(Sender: TObject);

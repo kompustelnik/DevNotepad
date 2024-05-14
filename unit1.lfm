@@ -7,8 +7,10 @@ object Form1: TForm1
   ClientHeight = 600
   ClientWidth = 1000
   Menu = MainMenu1
+  OnChangeBounds = FormChangeBounds
+  OnClose = FormClose
   OnCreate = FormCreate
-  Position = poScreenCenter
+  OnResize = FormResize
   object sbBar: TStatusBar
     Left = 0
     Height = 23
