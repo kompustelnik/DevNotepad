@@ -31,3 +31,6 @@ lib/
 
 # Any other
 *.ini
+
+#App file on Ubuntu
+notepad
