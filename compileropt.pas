@@ -16,12 +16,17 @@ type
     btnSelect: TButton;
     btnCancel: TButton;
     bntOK: TButton;
+    btnAddParam: TButton;
+    btnDeleteParam: TButton;
+    btnTestParams: TButton;
     edtParams: TEdit;
     edtCompiler: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     dOpen: TOpenDialog;
+    lbParams: TListBox;
     procedure bntOKClick(Sender: TObject);
+    procedure btnAddParamClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnSelectClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -75,7 +80,6 @@ begin
   UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
   UserSettings.WriteString('COMPILER', 'CompilerPath', edtCompiler.Text);
-  UserSettings.WriteString('COMPILER', 'Params', edtParams.Text);
 
   UserSettings.Destroy;
 end;
@@ -85,7 +89,6 @@ begin
   UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
   edtCompiler.Text:= UserSettings.ReadString('COMPILER', 'CompilerPath', '');
-  edtParams.Text:= UserSettings.ReadString('COMPILER', 'Params', '');
 
   UserSettings.Destroy;
 end;
@@ -94,6 +97,12 @@ procedure TForm2.bntOKClick(Sender: TObject);
 begin
   SaveUserSettings();
   Close;
+end;
+
+procedure TForm2.btnAddParamClick(Sender: TObject);
+begin
+  lbParams.Items.Add(edtParams.Text);
+  edtParams.Clear;
 end;
 
 end.
