@@ -43,10 +43,8 @@ type
   private
     procedure SaveUserSettings();
     procedure LoadUserSettings();
-
-    function ChangeFlagToParam(const AParamArray: TStringArray): TStringArray;
   public
-
+    function ChangeFlagToParam(const AParamArray: TStringArray): TStringArray;
   end;
 
 var
