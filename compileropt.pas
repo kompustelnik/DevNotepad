@@ -19,15 +19,22 @@ type
     btnAddParam: TButton;
     btnDeleteParam: TButton;
     btnTestParams: TButton;
+    btnAddCommands: TButton;
+    btnDeleteCommands: TButton;
+    edtAdditionalCommands: TEdit;
     edtParams: TEdit;
     edtCompiler: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     dOpen: TOpenDialog;
+    Label3: TLabel;
     lbParams: TListBox;
+    lbAdditionalCommands: TListBox;
     procedure bntOKClick(Sender: TObject);
+    procedure btnAddCommandsClick(Sender: TObject);
     procedure btnAddParamClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure btnDeleteCommandsClick(Sender: TObject);
     procedure btnDeleteParamClick(Sender: TObject);
     procedure btnSelectClick(Sender: TObject);
     procedure btnTestParamsClick(Sender: TObject);
@@ -75,6 +82,14 @@ begin
   Close;
 end;
 
+procedure TForm2.btnDeleteCommandsClick(Sender: TObject);
+begin
+  if (lbAdditionalCommands.ItemIndex >= 0) then
+   begin
+     lbAdditionalCommands.Items.Delete(lbAdditionalCommands.ItemIndex);
+   end;
+end;
+
 procedure TForm2.btnDeleteParamClick(Sender: TObject);
 begin
   if (lbParams.ItemIndex >= 0) then
@@ -113,6 +128,22 @@ begin
 
      ShowMessage(edtCompiler.Text + ' ' + AParamsStr);
    end;
+
+  for i:= 0 to lbAdditionalCommands.Items.Count -1 do
+   begin
+     AParamArr:= lbAdditionalCommands.Items[i].Split(' ');
+
+     AParamArr:= ChangeFlagToParam(AParamArr);
+
+     AParamsStr:= '';
+
+     for j:= Low(AParamArr) to High(AParamArr) do
+      begin
+        AParamsStr:= AParamsStr + ' ' + AParamArr[j];
+      end;
+
+     ShowMessage(AParamsStr);
+   end;
 end;
 
 procedure TForm2.FormCreate(Sender: TObject);
@@ -145,10 +176,16 @@ begin
 
   UserSettings.WriteString('COMPILER', 'CompilerPath', edtCompiler.Text);
   UserSettings.WriteInteger('COMPILER', 'ParamListCount', lbParams.Items.Count);
+  UserSettings.WriteInteger('COMPILER', 'CommandsCount', lbAdditionalCommands.Items.Count);
 
   for i:= 0 to lbParams.Items.Count -1 do
    begin
      UserSettings.WriteString('COMPILER', 'Param' + i.ToString(), lbParams.Items[i]);
+   end;
+
+  for i:= 0 to lbAdditionalCommands.Items.Count -1 do
+   begin
+     UserSettings.WriteString('COMPILER', 'Command' + i.ToString(), lbAdditionalCommands.Items[i]);
    end;
 
   UserSettings.Destroy;
@@ -158,17 +195,26 @@ procedure TForm2.LoadUserSettings();
 var
   i: Integer;
   AParamListCount: Integer;
+  ACommandListCount: Integer;
   AParamsStr: String;
+  ACommandStr: String;
 begin
   UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
   edtCompiler.Text:= UserSettings.ReadString('COMPILER', 'CompilerPath', '');
   AParamListCount:= UserSettings.ReadInteger('COMPILER', 'ParamListCount', 0);
+  ACommandListCount:= UserSettings.ReadInteger('COMPILER', 'CommandsCount', 0);
 
   for i:= 0 to AParamListCount -1 do
    begin
      AParamsStr:= UserSettings.ReadString('COMPILER', 'Param' + i.ToString(), '');
      lbParams.Items.Add(AParamsStr);
+   end;
+
+  for i:= 0 to ACommandListCount -1 do
+   begin
+     ACommandStr:= UserSettings.ReadString('COMPILER', 'Command' + i.ToString(), '');
+     lbAdditionalCommands.Items.Add(ACommandStr);
    end;
 
   UserSettings.Destroy;
@@ -178,6 +224,11 @@ procedure TForm2.bntOKClick(Sender: TObject);
 begin
   SaveUserSettings();
   Close;
+end;
+
+procedure TForm2.btnAddCommandsClick(Sender: TObject);
+begin
+  lbAdditionalCommands.Items.Add(edtAdditionalCommands.Text);
 end;
 
 procedure TForm2.btnAddParamClick(Sender: TObject);
