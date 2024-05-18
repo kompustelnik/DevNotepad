@@ -89,6 +89,7 @@ object Form2: TForm2
     ItemHeight = 0
     TabOrder = 6
     TopIndex = -1
+    OnDblClick = lbParamsDblClick
   end
   object btnDeleteParam: TButton
     Left = 8
@@ -98,6 +99,7 @@ object Form2: TForm2
     Anchors = [akRight]
     Caption = 'Delete'
     TabOrder = 7
+    OnClick = btnDeleteParamClick
   end
   object btnTestParams: TButton
     Left = 413
@@ -106,6 +108,7 @@ object Form2: TForm2
     Width = 75
     Caption = 'Test all'
     TabOrder = 8
+    OnClick = btnTestParamsClick
   end
   object dOpen: TOpenDialog
     Filter = 'Windows executable|*.exe|All files|*.*'
