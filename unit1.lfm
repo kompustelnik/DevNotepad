@@ -665,13 +665,13 @@ object Form1: TForm1
   end
   object dOpen: TOpenDialog
     DefaultExt = '.txt'
-    Filter = 'Text files|*.txt|Delphi project file|*.dpr|Lazarus project file|*.lpr|Pascal source file|*.pas|C# solution file|*.sln|C# source file|*.cs|XML document|*.xml|GITignore files|*.gitignore|All files|*.*'
+    Filter = 'Text files|*.txt|Delphi project file|*.dpr|Lazarus project file|*.lpr|Pascal source file|*.pas|C# solution file|*.sln|C# source file|*.cs|Asembler files|*.asm|XML document|*.xml|GITignore files|*.gitignore|All files|*.*'
     Left = 80
     Top = 104
   end
   object dSave: TSaveDialog
     DefaultExt = '.txt'
-    Filter = 'Text files|*.txt|Delphi project file|*.dpr|Lazarus project file|*.lpr|Pascal source file|*.pas|C# solution file|*.sln|C# source file|*.cs|XML document|*.xml|GITignore files|*.gitignore|All files|*.*'
+    Filter = 'Text files|*.txt|Delphi project file|*.dpr|Lazarus project file|*.lpr|Pascal source file|*.pas|C# solution file|*.sln|C# source file|*.cs|Asembler files|*.asm|XML document|*.xml|GITignore files|*.gitignore|All files|*.*'
     Left = 192
     Top = 104
   end
