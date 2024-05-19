@@ -147,12 +147,13 @@ object Form2: TForm2
     AnchorSideBottom.Side = asrBottom
     Left = 8
     Height = 112
-    Top = 368
+    Top = 364
     Width = 480
     Anchors = [akLeft, akRight, akBottom]
     ItemHeight = 0
     TabOrder = 11
     TopIndex = -1
+    OnDblClick = lbAdditionalCommandsDblClick
   end
   object btnDeleteCommands: TButton
     Left = 8
@@ -164,9 +165,43 @@ object Form2: TForm2
     TabOrder = 12
     OnClick = btnDeleteCommandsClick
   end
+  object btnSaveOptions: TButton
+    Left = 288
+    Height = 26
+    Top = 488
+    Width = 94
+    Anchors = [akRight, akBottom]
+    Caption = 'Save'
+    TabOrder = 13
+    OnClick = btnSaveOptionsClick
+  end
+  object btnLoadOptions: TButton
+    Left = 392
+    Height = 26
+    Top = 488
+    Width = 96
+    Anchors = [akRight, akBottom]
+    Caption = 'Load'
+    TabOrder = 14
+    OnClick = btnLoadOptionsClick
+  end
   object dOpen: TOpenDialog
     Filter = 'Windows executable|*.exe|All files|*.*'
     Left = 32
     Top = 160
+  end
+  object dSaveOptions: TSaveDialog
+    Title = 'Save options'
+    DefaultExt = '.ini'
+    Filter = 'DevNotepad options|*.ini'
+    Left = 288
+    Top = 416
+  end
+  object dOpenOptions: TOpenDialog
+    Title = 'Load options'
+    DefaultExt = '.ini'
+    Filter = 'DevNotepad options|*.ini'
+    Left = 392
+    Top = 424
   end
 end

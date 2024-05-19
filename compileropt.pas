@@ -21,6 +21,8 @@ type
     btnTestParams: TButton;
     btnAddCommands: TButton;
     btnDeleteCommands: TButton;
+    btnSaveOptions: TButton;
+    btnLoadOptions: TButton;
     edtAdditionalCommands: TEdit;
     edtParams: TEdit;
     edtCompiler: TEdit;
@@ -30,19 +32,24 @@ type
     Label3: TLabel;
     lbParams: TListBox;
     lbAdditionalCommands: TListBox;
+    dOpenOptions: TOpenDialog;
+    dSaveOptions: TSaveDialog;
     procedure bntOKClick(Sender: TObject);
     procedure btnAddCommandsClick(Sender: TObject);
     procedure btnAddParamClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnDeleteCommandsClick(Sender: TObject);
     procedure btnDeleteParamClick(Sender: TObject);
+    procedure btnLoadOptionsClick(Sender: TObject);
+    procedure btnSaveOptionsClick(Sender: TObject);
     procedure btnSelectClick(Sender: TObject);
     procedure btnTestParamsClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure lbAdditionalCommandsDblClick(Sender: TObject);
     procedure lbParamsDblClick(Sender: TObject);
   private
-    procedure SaveUserSettings();
-    procedure LoadUserSettings();
+    procedure SaveUserSettings(Const AFileName: String = '');
+    procedure LoadUserSettings(Const AFileName: String = '');
   public
     function ChangeFlagToParam(const AParamArray: TStringArray): TStringArray;
   end;
@@ -66,10 +73,13 @@ begin
   for i:= Low(AParamArray) to High(AParamArray) do
    begin
      // $(sourcefilepath) flag
-     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilepath)', FileDirectory, [rfReplaceAll]);
+     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilepath)', ExtractFilePath(FileDirectory), [rfReplaceAll]);
+
+     // $(sourcefile) flag
+     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefile)', FileDirectory, [rfReplaceAll]);
 
      // $(sourcefilename) flag
-     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilename)', ChangeFileExt(FileDirectory, ''), [rfReplaceAll])
+     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilename)', ChangeFileExt(ExtractFileName(FileDirectory), ''), [rfReplaceAll]);
    end;
 
   Result:= AParamArray;;
@@ -93,6 +103,22 @@ begin
   if (lbParams.ItemIndex >= 0) then
    begin
      lbParams.Items.Delete(lbParams.ItemIndex);
+   end;
+end;
+
+procedure TForm2.btnLoadOptionsClick(Sender: TObject);
+begin
+  if (dOpenOptions.Execute) then
+   begin
+     LoadUserSettings(dOpenOptions.FileName);
+   end;
+end;
+
+procedure TForm2.btnSaveOptionsClick(Sender: TObject);
+begin
+  if (dSaveOptions.Execute) then
+   begin
+     SaveUserSettings(dSaveOptions.FileName);
    end;
 end;
 
@@ -156,6 +182,17 @@ begin
    begin
      dOpen.InitialDir:= edtCompiler.Text;
    end;
+
+  dOpenOptions.InitialDir:= RootDirectory;
+  dSaveOptions.InitialDir:= RootDirectory;
+end;
+
+procedure TForm2.lbAdditionalCommandsDblClick(Sender: TObject);
+begin
+  if (lbAdditionalCommands.ItemIndex >= 0) then
+   begin
+     edtAdditionalCommands.Text:= lbAdditionalCommands.Items[lbAdditionalCommands.ItemIndex];
+   end;
 end;
 
 procedure TForm2.lbParamsDblClick(Sender: TObject);
@@ -166,11 +203,14 @@ begin
    end;
 end;
 
-procedure TForm2.SaveUserSettings();
+procedure TForm2.SaveUserSettings(Const AFileName: String = '');
 var
   i: Integer;
 begin
-  UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
+  if (AFileName = '') then
+   UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME)
+  else
+   UserSettings:= TIniFile.Create(AFileName);
 
   UserSettings.WriteString('COMPILER', 'CompilerPath', edtCompiler.Text);
   UserSettings.WriteInteger('COMPILER', 'ParamListCount', lbParams.Items.Count);
@@ -189,7 +229,7 @@ begin
   UserSettings.Destroy;
 end;
 
-procedure TForm2.LoadUserSettings();
+procedure TForm2.LoadUserSettings(Const AFileName: String = '');
 var
   i: Integer;
   AParamListCount: Integer;
@@ -197,7 +237,13 @@ var
   AParamsStr: String;
   ACommandStr: String;
 begin
-  UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
+  if (AFileName = '') then
+   UserSettings:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME)
+  else
+   UserSettings:= TIniFile.Create(AFileName);
+
+  lbParams.Clear;
+  lbAdditionalCommands.Clear;
 
   edtCompiler.Text:= UserSettings.ReadString('COMPILER', 'CompilerPath', '');
   AParamListCount:= UserSettings.ReadInteger('COMPILER', 'ParamListCount', 0);
@@ -227,6 +273,7 @@ end;
 procedure TForm2.btnAddCommandsClick(Sender: TObject);
 begin
   lbAdditionalCommands.Items.Add(edtAdditionalCommands.Text);
+  edtAdditionalCommands.Clear;
 end;
 
 procedure TForm2.btnAddParamClick(Sender: TObject);

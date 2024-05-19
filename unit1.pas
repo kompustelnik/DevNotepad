@@ -23,13 +23,23 @@ type
     dFont: TFontDialog;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
+    miMessages: TMenuItem;
+    Separator8: TMenuItem;
+    pmSelectAll: TMenuItem;
+    pmSelectLine: TMenuItem;
+    Separator7: TMenuItem;
+    Separator6: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
+    pmCut: TMenuItem;
+    pmCopy: TMenuItem;
+    pmPaste: TMenuItem;
     miCompile: TMenuItem;
     miRun: TMenuItem;
     miCompilerOptions: TMenuItem;
     miSelectFont: TMenuItem;
+    pmTextField: TPopupMenu;
     Separator5: TMenuItem;
     miSynHi: TMenuItem;
     miSelectLine: TMenuItem;
@@ -68,6 +78,7 @@ type
     procedure miCopyClick(Sender: TObject);
     procedure miCutClick(Sender: TObject);
     procedure miExitClick(Sender: TObject);
+    procedure miMessagesClick(Sender: TObject);
     procedure miNewClick(Sender: TObject);
     procedure miAboutClick(Sender: TObject);
     procedure miOpenClick(Sender: TObject);
@@ -80,6 +91,11 @@ type
     procedure miSelectLineClick(Sender: TObject);
     procedure miSynHiClick(Sender: TObject);
     procedure miUndoClick(Sender: TObject);
+    procedure pmCopyClick(Sender: TObject);
+    procedure pmCutClick(Sender: TObject);
+    procedure pmPasteClick(Sender: TObject);
+    procedure pmSelectAllClick(Sender: TObject);
+    procedure pmSelectLineClick(Sender: TObject);
     procedure seTextFieldChange(Sender: TObject);
     procedure seTextFieldClick(Sender: TObject);
   private
@@ -121,7 +137,7 @@ var
 
 implementation
 uses
-  CompilerOpt;
+  CompilerOpt, OutputMessages;
 
 {$R *.lfm}
 
@@ -244,6 +260,10 @@ var
   hProcess: TProcess;
   bCompilingError: Boolean;
 begin
+  miSave.Click;
+  Form3.lbOutput.Clear;
+  miMessages.Click;
+
   Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
   ACompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
@@ -294,12 +314,12 @@ begin
      if (AErrMsg.Text = '') then
       begin
         if (AOutMsg.Text <> '') then
-         MessageDlg('Compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)
+         Form3.lbOutput.Items.Append(AOutMsg.Text);
       end
      else
       begin
         bCompilingError:= True;
-        MessageDlg('Compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
+        Form3.lbOutput.Items.Append(AOutMsg.Text + AErrMsg.Text);
       end;
 
      AErrMsg.Destroy();
@@ -338,18 +358,20 @@ begin
      if (AErrMsg.Text = '') then
       begin
         if (AOutMsg.Text <> '') then
-         MessageDlg('Post compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)
+         Form3.lbOutput.Items.Append(AOutMsg.Text);
       end
      else
       begin
         bCompilingError:= True;
-        MessageDlg('Post compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
+        Form3.lbOutput.Items.Append(AOutMsg.Text + AErrMsg.Text);
       end;
 
      AErrMsg.Destroy();
      AOutMsg.Destroy();
      hProcess.Destroy();
    end;
+
+  miMessages.Click;
 
   Ini.Destroy();
 end;
@@ -400,6 +422,14 @@ begin
    begin
      Application.Terminate;
    end;
+end;
+
+procedure TForm1.miMessagesClick(Sender: TObject);
+begin
+  Form3.Show;
+  Form3.Top:= Top + Height;
+  Form3.Left:= Left;
+  Form3.Width:= Width;
 end;
 
 procedure TForm1.miNewClick(Sender: TObject);
@@ -627,6 +657,31 @@ end;
 procedure TForm1.miUndoClick(Sender: TObject);
 begin
   seTextField.Undo;
+end;
+
+procedure TForm1.pmCopyClick(Sender: TObject);
+begin
+  miCopy.Click;
+end;
+
+procedure TForm1.pmCutClick(Sender: TObject);
+begin
+  miCut.Click;
+end;
+
+procedure TForm1.pmPasteClick(Sender: TObject);
+begin
+  miPaste.Click;
+end;
+
+procedure TForm1.pmSelectAllClick(Sender: TObject);
+begin
+  miSelectAll.Click;
+end;
+
+procedure TForm1.pmSelectLineClick(Sender: TObject);
+begin
+  miSelectLine.Click;
 end;
 
 procedure TForm1.seTextFieldChange(Sender: TObject);
