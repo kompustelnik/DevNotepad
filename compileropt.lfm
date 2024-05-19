@@ -7,6 +7,7 @@ object Form2: TForm2
   Caption = 'Compiler options'
   ClientHeight = 575
   ClientWidth = 504
+  Constraints.MinHeight = 575
   Constraints.MinWidth = 504
   OnCreate = FormCreate
   Position = poScreenCenter
@@ -40,7 +41,6 @@ object Form2: TForm2
     Height = 17
     Top = 88
     Width = 55
-    Anchors = [akLeft]
     Caption = 'Params:'
   end
   object btnCancel: TButton
@@ -68,7 +68,7 @@ object Form2: TForm2
     Height = 34
     Top = 108
     Width = 394
-    Anchors = [akLeft, akRight]
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
   end
   object btnAddParam: TButton
@@ -76,26 +76,32 @@ object Form2: TForm2
     Height = 34
     Top = 108
     Width = 75
+    Anchors = [akTop, akRight]
     Caption = 'Add'
     TabOrder = 5
     OnClick = btnAddParamClick
   end
   object lbParams: TListBox
+    AnchorSideTop.Side = asrBottom
+    AnchorSideBottom.Side = asrCenter
     Left = 8
     Height = 120
     Top = 144
     Width = 480
+    Anchors = [akTop, akLeft, akRight, akBottom]
     ItemHeight = 0
     TabOrder = 6
     TopIndex = -1
     OnDblClick = lbParamsDblClick
   end
   object btnDeleteParam: TButton
+    AnchorSideTop.Side = asrCenter
+    AnchorSideBottom.Side = asrBottom
     Left = 8
     Height = 34
     Top = 264
     Width = 75
-    Anchors = [akRight]
+    Anchors = [akLeft, akBottom]
     Caption = 'Delete'
     TabOrder = 7
     OnClick = btnDeleteParamClick
@@ -105,6 +111,7 @@ object Form2: TForm2
     Height = 33
     Top = 530
     Width = 94
+    Anchors = [akRight, akBottom]
     Caption = 'Test all'
     TabOrder = 8
     OnClick = btnTestParamsClick
@@ -114,6 +121,7 @@ object Form2: TForm2
     Height = 17
     Top = 308
     Width = 152
+    Anchors = [akLeft, akBottom]
     Caption = 'Additional commands:'
   end
   object edtAdditionalCommands: TEdit
@@ -121,6 +129,7 @@ object Form2: TForm2
     Height = 34
     Top = 328
     Width = 394
+    Anchors = [akLeft, akRight, akBottom]
     TabOrder = 9
   end
   object btnAddCommands: TButton
@@ -128,15 +137,19 @@ object Form2: TForm2
     Height = 34
     Top = 328
     Width = 75
+    Anchors = [akRight, akBottom]
     Caption = 'Add'
     TabOrder = 10
     OnClick = btnAddCommandsClick
   end
   object lbAdditionalCommands: TListBox
+    AnchorSideTop.Side = asrBottom
+    AnchorSideBottom.Side = asrBottom
     Left = 8
     Height = 112
     Top = 368
     Width = 480
+    Anchors = [akLeft, akRight, akBottom]
     ItemHeight = 0
     TabOrder = 11
     TopIndex = -1
@@ -146,6 +159,7 @@ object Form2: TForm2
     Height = 34
     Top = 480
     Width = 75
+    Anchors = [akLeft, akBottom]
     Caption = 'Delete'
     TabOrder = 12
     OnClick = btnDeleteCommandsClick
