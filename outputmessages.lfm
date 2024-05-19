@@ -14,7 +14,27 @@ object Form3: TForm3
     Width = 906
     Align = alClient
     ItemHeight = 0
+    PopupMenu = pmMessages
     TabOrder = 0
     TopIndex = -1
+  end
+  object pmMessages: TPopupMenu
+    Left = 151
+    Top = 31
+    object pmCopy: TMenuItem
+      Caption = 'Copy message'
+      OnClick = pmCopyClick
+    end
+    object pmCopyAll: TMenuItem
+      Caption = 'Copy all messages'
+      OnClick = pmCopyAllClick
+    end
+    object Separator1: TMenuItem
+      Caption = '-'
+    end
+    object pmClear: TMenuItem
+      Caption = 'Clear'
+      OnClick = pmClearClick
+    end
   end
 end
