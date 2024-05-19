@@ -262,6 +262,7 @@ var
 begin
   miSave.Click;
   Form3.lbOutput.Clear;
+  miMessages.Click;
 
   Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
@@ -312,14 +313,12 @@ begin
 
      if (AErrMsg.Text = '') then
       begin
-        {if (AOutMsg.Text <> '') then
-         MessageDlg('Compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)}
-        Form3.lbOutput.Items.Append(AOutMsg.Text);
+        if (AOutMsg.Text <> '') then
+         Form3.lbOutput.Items.Append(AOutMsg.Text);
       end
      else
       begin
         bCompilingError:= True;
-        //MessageDlg('Compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
         Form3.lbOutput.Items.Append(AOutMsg.Text + AErrMsg.Text);
       end;
 
