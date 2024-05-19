@@ -626,6 +626,14 @@ object Form1: TForm1
         ShortCut = 113
         OnClick = miSynHiClick
       end
+      object Separator8: TMenuItem
+        Caption = '-'
+      end
+      object miMessages: TMenuItem
+        Caption = 'Messages'
+        ShortCut = 114
+        OnClick = miMessagesClick
+      end
     end
     object MenuItem6: TMenuItem
       Caption = 'Run'
