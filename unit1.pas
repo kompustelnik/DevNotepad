@@ -23,13 +23,21 @@ type
     dFont: TFontDialog;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
+    pmSelectAll: TMenuItem;
+    pmSelectLine: TMenuItem;
+    Separator7: TMenuItem;
+    Separator6: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
+    pmCut: TMenuItem;
+    pmCopy: TMenuItem;
+    pmPaste: TMenuItem;
     miCompile: TMenuItem;
     miRun: TMenuItem;
     miCompilerOptions: TMenuItem;
     miSelectFont: TMenuItem;
+    pmTextField: TPopupMenu;
     Separator5: TMenuItem;
     miSynHi: TMenuItem;
     miSelectLine: TMenuItem;
@@ -80,6 +88,11 @@ type
     procedure miSelectLineClick(Sender: TObject);
     procedure miSynHiClick(Sender: TObject);
     procedure miUndoClick(Sender: TObject);
+    procedure pmCopyClick(Sender: TObject);
+    procedure pmCutClick(Sender: TObject);
+    procedure pmPasteClick(Sender: TObject);
+    procedure pmSelectAllClick(Sender: TObject);
+    procedure pmSelectLineClick(Sender: TObject);
     procedure seTextFieldChange(Sender: TObject);
     procedure seTextFieldClick(Sender: TObject);
   private
@@ -244,6 +257,8 @@ var
   hProcess: TProcess;
   bCompilingError: Boolean;
 begin
+  miSave.Click;
+
   Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
   ACompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
@@ -627,6 +642,31 @@ end;
 procedure TForm1.miUndoClick(Sender: TObject);
 begin
   seTextField.Undo;
+end;
+
+procedure TForm1.pmCopyClick(Sender: TObject);
+begin
+  miCopy.Click;
+end;
+
+procedure TForm1.pmCutClick(Sender: TObject);
+begin
+  miCut.Click;
+end;
+
+procedure TForm1.pmPasteClick(Sender: TObject);
+begin
+  miPaste.Click;
+end;
+
+procedure TForm1.pmSelectAllClick(Sender: TObject);
+begin
+  miSelectAll.Click;
+end;
+
+procedure TForm1.pmSelectLineClick(Sender: TObject);
+begin
+  miSelectLine.Click;
 end;
 
 procedure TForm1.seTextFieldChange(Sender: TObject);

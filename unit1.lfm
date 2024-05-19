@@ -11,7 +11,6 @@ object Form1: TForm1
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
-  LCLVersion = '3.2.0.0'
   object sbBar: TStatusBar
     Left = 0
     Height = 19
@@ -45,6 +44,7 @@ object Form1: TForm1
     Font.Quality = fqNonAntialiased
     ParentColor = False
     ParentFont = False
+    PopupMenu = pmTextField
     TabOrder = 1
     OnClick = seTextFieldClick
     Gutter.Width = 57
@@ -538,6 +538,7 @@ object Form1: TForm1
       Caption = 'File'
       object miNew: TMenuItem
         Caption = 'New'
+        ShortCut = 16462
         OnClick = miNewClick
       end
       object Separator1: TMenuItem
@@ -545,14 +546,17 @@ object Form1: TForm1
       end
       object miOpen: TMenuItem
         Caption = 'Open'
+        ShortCut = 16463
         OnClick = miOpenClick
       end
       object miSave: TMenuItem
         Caption = 'Save'
+        ShortCut = 16467
         OnClick = miSaveClick
       end
       object miSaveAs: TMenuItem
         Caption = 'Save as...'
+        ShortCut = 24659
         OnClick = miSaveAsClick
       end
       object Separator2: TMenuItem
@@ -560,6 +564,7 @@ object Form1: TForm1
       end
       object miExit: TMenuItem
         Caption = 'Exit'
+        ShortCut = 32883
         OnClick = miExitClick
       end
     end
@@ -567,10 +572,12 @@ object Form1: TForm1
       Caption = 'Edit'
       object miUndo: TMenuItem
         Caption = 'Undo'
+        ShortCut = 16474
         OnClick = miUndoClick
       end
       object miRedo: TMenuItem
         Caption = 'Redo'
+        ShortCut = 16473
         OnClick = miRedoClick
       end
       object Separator3: TMenuItem
@@ -578,14 +585,17 @@ object Form1: TForm1
       end
       object miCut: TMenuItem
         Caption = 'Cut'
+        ShortCut = 16472
         OnClick = miCutClick
       end
       object miCopy: TMenuItem
         Caption = 'Copy'
+        ShortCut = 16451
         OnClick = miCopyClick
       end
       object miPaste: TMenuItem
         Caption = 'Paste'
+        ShortCut = 16470
         OnClick = miPasteClick
       end
       object Separator4: TMenuItem
@@ -593,10 +603,12 @@ object Form1: TForm1
       end
       object miSelectAll: TMenuItem
         Caption = 'Select All'
+        ShortCut = 16449
         OnClick = miSelectAllClick
       end
       object miSelectLine: TMenuItem
         Caption = 'Select line'
+        ShortCut = 8232
         OnClick = miSelectLineClick
       end
       object Separator5: TMenuItem
@@ -611,6 +623,7 @@ object Form1: TForm1
       Caption = 'View'
       object miSynHi: TMenuItem
         Caption = 'Syntax highlighting'
+        ShortCut = 113
         OnClick = miSynHiClick
       end
     end
@@ -618,16 +631,19 @@ object Form1: TForm1
       Caption = 'Run'
       object miCompile: TMenuItem
         Caption = 'Compile'
+        ShortCut = 16504
         OnClick = miCompileClick
       end
       object miRun: TMenuItem
         Caption = 'Compile and Run'
+        ShortCut = 120
       end
     end
     object MenuItem5: TMenuItem
       Caption = 'Tools'
       object miCompilerOptions: TMenuItem
         Caption = 'Compiler options'
+        ShortCut = 24655
         OnClick = miCompilerOptionsClick
       end
     end
@@ -762,5 +778,40 @@ object Form1: TForm1
     ActiveDot = False
     Left = 416
     Top = 184
+  end
+  object pmTextField: TPopupMenu
+    Left = 192
+    Top = 40
+    object pmCut: TMenuItem
+      Caption = 'Cut'
+      ShortCut = 16472
+      OnClick = pmCutClick
+    end
+    object pmCopy: TMenuItem
+      Caption = 'Copy'
+      ShortCut = 16451
+      OnClick = pmCopyClick
+    end
+    object pmPaste: TMenuItem
+      Caption = 'Paste'
+      ShortCut = 16470
+      OnClick = pmPasteClick
+    end
+    object Separator6: TMenuItem
+      Caption = '-'
+    end
+    object pmSelectAll: TMenuItem
+      Caption = 'Sellect all'
+      ShortCut = 16449
+      OnClick = pmSelectAllClick
+    end
+    object pmSelectLine: TMenuItem
+      Caption = 'Select line'
+      ShortCut = 8232
+      OnClick = pmSelectLineClick
+    end
+    object Separator7: TMenuItem
+      Caption = '-'
+    end
   end
 end
