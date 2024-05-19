@@ -230,18 +230,106 @@ end;
 
 procedure TForm1.miCompileClick(Sender: TObject);
 var
+  i, j: Integer;
   Ini: TIniFile;
-  Compiler: String;
-  CompilerPath: String;
-  Params: String;
-  Param: String;
-  OutMsg: TStringList;
+  ACompilerPath: String;
+  AParamsCount: Integer;
+  AParams: TStringArray;
+  ASingleParamArr: TStringArray;
+  ACommandsCount: Integer;
+  ACommands: TStringArray;
+  ASingleCommandArr: TStringArray;
+  AOutMsg: TStringList;
   hProcess: TProcess;
-  ParamList: TStringArray;
-  i: Integer;
+  bOK: Boolean;
 begin
   Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
+  ACompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
+
+  if (not FileExists(ACompilerPath)) then
+   begin
+     Ini.Destroy();
+
+     Exit;
+   end;
+
+  AParamsCount:= Ini.ReadInteger('COMPILER', 'ParamListCount', 0);
+  ACommandsCount:= Ini.ReadInteger('COMPILER', 'CommandsCount', 0);
+
+  SetLength(AParams, AParamsCount);
+  SetLength(ACommands, ACommandsCount);
+
+  for i:= 0 to AParamsCount -1 do
+   begin
+     AParams[i]:= Ini.ReadString('COMPILER', 'Param' + i.ToString(), '');
+     AParams:= Form2.ChangeFlagToParam(AParams);
+     ASingleParamArr:= AParams[i].Split(' ');
+
+     hProcess:= TProcess.Create(NIL);
+     AOutMsg:= TStringList.Create();
+
+     hProcess.Executable:= ACompilerPath;
+
+     for j:= Low(ASingleParamArr) to High(ASingleParamArr) do
+      begin
+        hProcess.Parameters.Add(ASingleParamArr[j]);
+      end;
+
+     hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
+     hProcess.Execute;
+
+     AOutMsg.Add('stdout:');
+     AOutMsg.LoadFromStream(hProcess.Output);
+     AOutMsg.Add('stderr:');
+     AOutMsg.LoadFromStream(hProcess.StdErr);
+
+     ShowMessage(AoutMsg.Text);
+
+     AOutMsg.Destroy();
+     hProcess.Destroy();
+   end;
+
+  for i:= 0 to ACommandsCount -1 do
+   begin
+     ACommands[i]:= Ini.ReadString('COMPILER', 'Command' + i.ToString(), '');
+     ACommands:= Form2.ChangeFlagToParam(ACommands);
+     ASingleCommandArr:= ACommands[i].Split(' ');
+   end;
+
+  //Check if all compiler params are filled
+  if (ACompilerPath = '') or (AParams = NIL) then
+   begin
+     MessageDlg('Error', msgERR01, mtError, [mbOK], 0);
+     Exit;
+   end;
+
+  bOK:= False;
+
+
+     {
+  if (bOK) then
+   begin
+     hProcess:= TProcess.Create(NIL);
+     AOutMsg:= TStringList.Create();
+
+     hProcess.Executable:= ASingleCommandArr[0];
+
+     for i:= 1 to High(ASingleCommandArr) do
+      begin
+        hProcess.Parameters.Add(ASingleCommandArr[i]);
+      end;
+
+     hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
+     hProcess.Execute;
+
+     AOutMsg.Destroy();
+     hProcess.Destroy();
+   end;     }
+
+  Ini.Destroy();
+
+  {
   CompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
 
   //Get compiler params
@@ -285,6 +373,7 @@ begin
      hProcess.Destroy;
      OutMsg.Destroy;
    end;
+   }
 end;
 
 procedure TForm1.miCompilerOptionsClick(Sender: TObject);
