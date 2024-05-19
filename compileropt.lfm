@@ -170,6 +170,7 @@ object Form2: TForm2
     Height = 26
     Top = 488
     Width = 94
+    Anchors = [akRight, akBottom]
     Caption = 'Save'
     TabOrder = 13
     OnClick = btnSaveOptionsClick
@@ -179,6 +180,7 @@ object Form2: TForm2
     Height = 26
     Top = 488
     Width = 96
+    Anchors = [akRight, akBottom]
     Caption = 'Load'
     TabOrder = 14
     OnClick = btnLoadOptionsClick
