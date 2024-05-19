@@ -351,73 +351,7 @@ begin
      hProcess.Destroy();
    end;
 
-     {
-  if (bOK) then
-   begin
-     hProcess:= TProcess.Create(NIL);
-     AOutMsg:= TStringList.Create();
-
-     hProcess.Executable:= ASingleCommandArr[0];
-
-     for i:= 1 to High(ASingleCommandArr) do
-      begin
-        hProcess.Parameters.Add(ASingleCommandArr[i]);
-      end;
-
-     hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
-     hProcess.Execute;
-
-     AOutMsg.Destroy();
-     hProcess.Destroy();
-   end;     }
-
   Ini.Destroy();
-
-  {
-  CompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
-
-  //Get compiler params
-  Params:= LowerCase(Ini.ReadString('COMPILER', 'Params', ''));
-
-  Ini.Destroy;
-
-  //Check if all compiler params are filled
-  if (CompilerPath = '') or (Params = '') then
-   begin
-     MessageDlg('Error', msgERR01, mtError, [mbOK], 0);
-     Exit;
-   end;
-
-  //If path to compiler is correct
-  if FileExists(CompilerPath) then
-   begin
-     hProcess:= TProcess.Create(NIL);
-     OutMsg:= TStringList.Create();
-
-     Compiler:= ExtractFileName(CompilerPath);
-     CompilerPath:= ExtractFilePath(CompilerPath);
-
-     Params:= StringReplace(Params, '$(sourcefile)', FileDirectory, [rfIgnoreCase]);
-
-     Params:= StringReplace(Params, '$(sourcefilename)', ExtractFilePath(FileDirectory) + ChangeFileExt(ExtractFileName(FileDirectory), ''), [rfIgnoreCase]);
-
-     ParamList:= Params.Split(' ');
-
-     hProcess.Executable:= CompilerPath + Compiler;
-
-     for i:= 0 to High(ParamList) do
-      hProcess.Parameters.Add(ParamList[i]);
-
-     hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
-     hProcess.Execute;
-
-     OutMsg.LoadFromStream(hProcess.Output);
-     ShowMessage(OutMsg.Text);
-
-     hProcess.Destroy;
-     OutMsg.Destroy;
-   end;
-   }
 end;
 
 procedure TForm1.miCompilerOptionsClick(Sender: TObject);
