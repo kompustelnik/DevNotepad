@@ -230,61 +230,128 @@ end;
 
 procedure TForm1.miCompileClick(Sender: TObject);
 var
+  i, j: Integer;
   Ini: TIniFile;
-  Compiler: String;
-  CompilerPath: String;
-  Params: String;
-  Param: String;
-  OutMsg: TStringList;
+  ACompilerPath: String;
+  AParamsCount: Integer;
+  AParams: TStringArray;
+  ASingleParamArr: TStringArray;
+  ACommandsCount: Integer;
+  ACommands: TStringArray;
+  ASingleCommandArr: TStringArray;
+  AOutMsg: TStringList;
+  AErrMsg: TStringList;
   hProcess: TProcess;
-  ParamList: TStringArray;
-  i: Integer;
+  bCompilingError: Boolean;
 begin
   Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
-  CompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
+  ACompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
 
-  //Get compiler params
-  Params:= LowerCase(Ini.ReadString('COMPILER', 'Params', ''));
+  AParamsCount:= Ini.ReadInteger('COMPILER', 'ParamListCount', 0);
 
-  Ini.Destroy;
-
-  //Check if all compiler params are filled
-  if (CompilerPath = '') or (Params = '') then
+  if ((ACompilerPath = '') or (AParamsCount = 0)) then
    begin
      MessageDlg('Error', msgERR01, mtError, [mbOK], 0);
+
+     Ini.Destroy();
+
      Exit;
    end;
 
-  //If path to compiler is correct
-  if FileExists(CompilerPath) then
+  ACommandsCount:= Ini.ReadInteger('COMPILER', 'CommandsCount', 0);
+
+  SetLength(AParams, AParamsCount);
+  SetLength(ACommands, ACommandsCount);
+
+  bCompilingError:= False;
+
+  for i:= 0 to AParamsCount -1 do
    begin
+     AParams[i]:= Ini.ReadString('COMPILER', 'Param' + i.ToString(), '');
+     AParams:= Form2.ChangeFlagToParam(AParams);
+     ASingleParamArr:= AParams[i].Split(' ');
+
      hProcess:= TProcess.Create(NIL);
-     OutMsg:= TStringList.Create();
+     AOutMsg:= TStringList.Create();
+     AErrMsg:= TStringList.Create();
 
-     Compiler:= ExtractFileName(CompilerPath);
-     CompilerPath:= ExtractFilePath(CompilerPath);
+     hProcess.Executable:= ACompilerPath;
 
-     Params:= StringReplace(Params, '$(sourcefile)', FileDirectory, [rfIgnoreCase]);
-
-     Params:= StringReplace(Params, '$(sourcefilename)', ExtractFilePath(FileDirectory) + ChangeFileExt(ExtractFileName(FileDirectory), ''), [rfIgnoreCase]);
-
-     ParamList:= Params.Split(' ');
-
-     hProcess.Executable:= CompilerPath + Compiler;
-
-     for i:= 0 to High(ParamList) do
-      hProcess.Parameters.Add(ParamList[i]);
+     for j:= Low(ASingleParamArr) to High(ASingleParamArr) do
+      begin
+        hProcess.Parameters.Add(ASingleParamArr[j]);
+      end;
 
      hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
      hProcess.Execute;
 
-     OutMsg.LoadFromStream(hProcess.Output);
-     ShowMessage(OutMsg.Text);
+     AOutMsg.Add('stdout:');
+     AOutMsg.LoadFromStream(hProcess.Output);
+     AErrMsg.Add('stderr:');
+     AErrMsg.LoadFromStream(hProcess.StdErr);
 
-     hProcess.Destroy;
-     OutMsg.Destroy;
+     if (AErrMsg.Text = '') then
+      begin
+        if (AOutMsg.Text <> '') then
+         MessageDlg('Compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)
+      end
+     else
+      begin
+        bCompilingError:= True;
+        MessageDlg('Compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
+      end;
+
+     AErrMsg.Destroy();
+     AOutMsg.Destroy();
+     hProcess.Destroy();
    end;
+
+  if (bCompilingError) then
+   Exit;
+
+  for i:= 0 to ACommandsCount -1 do
+   begin
+     ACommands[i]:= Ini.ReadString('COMPILER', 'Command' + i.ToString(), '');
+     ACommands:= Form2.ChangeFlagToParam(ACommands);
+     ASingleCommandArr:= ACommands[i].Split(' ');
+
+     hProcess:= TProcess.Create(NIL);
+     AOutMsg:= TStringList.Create();
+     AErrMsg:= TStringList.Create();
+
+     hProcess.Executable:= ASingleCommandArr[0];
+
+     for j:= 1 to High(ASingleCommandArr) do
+      begin
+        hProcess.Parameters.Add(ASingleCommandArr[j]);
+      end;
+
+     hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
+     hProcess.Execute;
+
+     AOutMsg.Add('stdout:');
+     AOutMsg.LoadFromStream(hProcess.Output);
+     AErrMsg.Add('stderr:');
+     AErrMsg.LoadFromStream(hProcess.StdErr);
+
+     if (AErrMsg.Text = '') then
+      begin
+        if (AOutMsg.Text <> '') then
+         MessageDlg('Post compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)
+      end
+     else
+      begin
+        bCompilingError:= True;
+        MessageDlg('Post compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
+      end;
+
+     AErrMsg.Destroy();
+     AOutMsg.Destroy();
+     hProcess.Destroy();
+   end;
+
+  Ini.Destroy();
 end;
 
 procedure TForm1.miCompilerOptionsClick(Sender: TObject);

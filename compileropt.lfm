@@ -1,14 +1,13 @@
 object Form2: TForm2
   Left = 342
-  Height = 202
+  Height = 575
   Top = 250
   Width = 504
   BorderStyle = bsSizeToolWin
   Caption = 'Compiler options'
-  ClientHeight = 202
+  ClientHeight = 575
   ClientWidth = 504
-  Constraints.MaxHeight = 202
-  Constraints.MinHeight = 202
+  Constraints.MinHeight = 575
   Constraints.MinWidth = 504
   OnCreate = FormCreate
   Position = poScreenCenter
@@ -42,13 +41,12 @@ object Form2: TForm2
     Height = 17
     Top = 88
     Width = 55
-    Anchors = [akLeft]
     Caption = 'Params:'
   end
   object btnCancel: TButton
     Left = 8
     Height = 33
-    Top = 157
+    Top = 530
     Width = 96
     Anchors = [akLeft, akBottom]
     Caption = 'Cancel'
@@ -58,7 +56,7 @@ object Form2: TForm2
   object bntOK: TButton
     Left = 392
     Height = 33
-    Top = 157
+    Top = 530
     Width = 96
     Anchors = [akRight, akBottom]
     Caption = 'OK'
@@ -68,14 +66,107 @@ object Form2: TForm2
   object edtParams: TEdit
     Left = 8
     Height = 34
-    Top = 104
-    Width = 480
-    Anchors = [akLeft, akRight]
+    Top = 108
+    Width = 394
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
+  end
+  object btnAddParam: TButton
+    Left = 413
+    Height = 34
+    Top = 108
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Add'
+    TabOrder = 5
+    OnClick = btnAddParamClick
+  end
+  object lbParams: TListBox
+    AnchorSideTop.Side = asrBottom
+    AnchorSideBottom.Side = asrCenter
+    Left = 8
+    Height = 120
+    Top = 144
+    Width = 480
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ItemHeight = 0
+    TabOrder = 6
+    TopIndex = -1
+    OnDblClick = lbParamsDblClick
+  end
+  object btnDeleteParam: TButton
+    AnchorSideTop.Side = asrCenter
+    AnchorSideBottom.Side = asrBottom
+    Left = 8
+    Height = 34
+    Top = 264
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = 'Delete'
+    TabOrder = 7
+    OnClick = btnDeleteParamClick
+  end
+  object btnTestParams: TButton
+    Left = 288
+    Height = 33
+    Top = 530
+    Width = 94
+    Anchors = [akRight, akBottom]
+    Caption = 'Test all'
+    TabOrder = 8
+    OnClick = btnTestParamsClick
+  end
+  object Label3: TLabel
+    Left = 16
+    Height = 17
+    Top = 308
+    Width = 152
+    Anchors = [akLeft, akBottom]
+    Caption = 'Additional commands:'
+  end
+  object edtAdditionalCommands: TEdit
+    Left = 8
+    Height = 34
+    Top = 328
+    Width = 394
+    Anchors = [akLeft, akRight, akBottom]
+    TabOrder = 9
+  end
+  object btnAddCommands: TButton
+    Left = 413
+    Height = 34
+    Top = 328
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = 'Add'
+    TabOrder = 10
+    OnClick = btnAddCommandsClick
+  end
+  object lbAdditionalCommands: TListBox
+    AnchorSideTop.Side = asrBottom
+    AnchorSideBottom.Side = asrBottom
+    Left = 8
+    Height = 112
+    Top = 368
+    Width = 480
+    Anchors = [akLeft, akRight, akBottom]
+    ItemHeight = 0
+    TabOrder = 11
+    TopIndex = -1
+  end
+  object btnDeleteCommands: TButton
+    Left = 8
+    Height = 34
+    Top = 480
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = 'Delete'
+    TabOrder = 12
+    OnClick = btnDeleteCommandsClick
   end
   object dOpen: TOpenDialog
     Filter = 'Windows executable|*.exe|All files|*.*'
-    Left = 136
-    Top = 152
+    Left = 32
+    Top = 160
   end
 end
