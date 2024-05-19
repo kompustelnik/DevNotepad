@@ -153,6 +153,7 @@ object Form2: TForm2
     ItemHeight = 0
     TabOrder = 11
     TopIndex = -1
+    OnDblClick = lbAdditionalCommandsDblClick
   end
   object btnDeleteCommands: TButton
     Left = 8

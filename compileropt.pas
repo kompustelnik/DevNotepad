@@ -39,6 +39,7 @@ type
     procedure btnSelectClick(Sender: TObject);
     procedure btnTestParamsClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure lbAdditionalCommandsDblClick(Sender: TObject);
     procedure lbParamsDblClick(Sender: TObject);
   private
     procedure SaveUserSettings();
@@ -158,6 +159,14 @@ begin
    end;
 end;
 
+procedure TForm2.lbAdditionalCommandsDblClick(Sender: TObject);
+begin
+  if (lbAdditionalCommands.ItemIndex >= 0) then
+   begin
+     edtAdditionalCommands.Text:= lbAdditionalCommands.Items[lbAdditionalCommands.ItemIndex];
+   end;
+end;
+
 procedure TForm2.lbParamsDblClick(Sender: TObject);
 begin
   if (lbParams.ItemIndex >= 0) then
@@ -227,6 +236,7 @@ end;
 procedure TForm2.btnAddCommandsClick(Sender: TObject);
 begin
   lbAdditionalCommands.Items.Add(edtAdditionalCommands.Text);
+  edtAdditionalCommands.Clear;
 end;
 
 procedure TForm2.btnAddParamClick(Sender: TObject);
