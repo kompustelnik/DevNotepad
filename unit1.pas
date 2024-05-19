@@ -261,6 +261,7 @@ var
   bCompilingError: Boolean;
 begin
   miSave.Click;
+  Form3.lbOutput.Clear;
 
   Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
@@ -358,12 +359,12 @@ begin
      if (AErrMsg.Text = '') then
       begin
         if (AOutMsg.Text <> '') then
-         MessageDlg('Post compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)
+         Form3.lbOutput.Items.Append(AOutMsg.Text);
       end
      else
       begin
         bCompilingError:= True;
-        MessageDlg('Post compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
+        Form3.lbOutput.Items.Append(AOutMsg.Text + AErrMsg.Text);
       end;
 
      AErrMsg.Destroy();
@@ -425,7 +426,7 @@ end;
 procedure TForm1.miMessagesClick(Sender: TObject);
 begin
   Form3.Show;
-  Form3.Top:= Top + ClientHeight;
+  Form3.Top:= Top + Height;
   Form3.Left:= Left;
   Form3.Width:= Width;
 end;
