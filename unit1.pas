@@ -240,25 +240,31 @@ var
   ACommands: TStringArray;
   ASingleCommandArr: TStringArray;
   AOutMsg: TStringList;
+  AErrMsg: TStringList;
   hProcess: TProcess;
-  bOK: Boolean;
+  bCompilingError: Boolean;
 begin
   Ini:= TIniFile.Create(RootDirectory + USER_SETTINGS_FILENAME);
 
   ACompilerPath:= Ini.ReadString('COMPILER', 'CompilerPath', '');
 
-  if (not FileExists(ACompilerPath)) then
+  AParamsCount:= Ini.ReadInteger('COMPILER', 'ParamListCount', 0);
+
+  if ((ACompilerPath = '') or (AParamsCount = 0)) then
    begin
+     MessageDlg('Error', msgERR01, mtError, [mbOK], 0);
+
      Ini.Destroy();
 
      Exit;
    end;
 
-  AParamsCount:= Ini.ReadInteger('COMPILER', 'ParamListCount', 0);
   ACommandsCount:= Ini.ReadInteger('COMPILER', 'CommandsCount', 0);
 
   SetLength(AParams, AParamsCount);
   SetLength(ACommands, ACommandsCount);
+
+  bCompilingError:= False;
 
   for i:= 0 to AParamsCount -1 do
    begin
@@ -268,6 +274,7 @@ begin
 
      hProcess:= TProcess.Create(NIL);
      AOutMsg:= TStringList.Create();
+     AErrMsg:= TStringList.Create();
 
      hProcess.Executable:= ACompilerPath;
 
@@ -281,31 +288,68 @@ begin
 
      AOutMsg.Add('stdout:');
      AOutMsg.LoadFromStream(hProcess.Output);
-     AOutMsg.Add('stderr:');
-     AOutMsg.LoadFromStream(hProcess.StdErr);
+     AErrMsg.Add('stderr:');
+     AErrMsg.LoadFromStream(hProcess.StdErr);
 
-     ShowMessage(AoutMsg.Text);
+     if (AErrMsg.Text = '') then
+      begin
+        if (AOutMsg.Text <> '') then
+         MessageDlg('Compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)
+      end
+     else
+      begin
+        bCompilingError:= True;
+        MessageDlg('Compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
+      end;
 
+     AErrMsg.Destroy();
      AOutMsg.Destroy();
      hProcess.Destroy();
    end;
+
+  if (bCompilingError) then
+   Exit;
 
   for i:= 0 to ACommandsCount -1 do
    begin
      ACommands[i]:= Ini.ReadString('COMPILER', 'Command' + i.ToString(), '');
      ACommands:= Form2.ChangeFlagToParam(ACommands);
      ASingleCommandArr:= ACommands[i].Split(' ');
+
+     hProcess:= TProcess.Create(NIL);
+     AOutMsg:= TStringList.Create();
+     AErrMsg:= TStringList.Create();
+
+     hProcess.Executable:= ASingleCommandArr[0];
+
+     for j:= 1 to High(ASingleCommandArr) do
+      begin
+        hProcess.Parameters.Add(ASingleCommandArr[j]);
+      end;
+
+     hProcess.Options:= hProcess.Options + [poWaitOnExit, poUsePipes];
+     hProcess.Execute;
+
+     AOutMsg.Add('stdout:');
+     AOutMsg.LoadFromStream(hProcess.Output);
+     AErrMsg.Add('stderr:');
+     AErrMsg.LoadFromStream(hProcess.StdErr);
+
+     if (AErrMsg.Text = '') then
+      begin
+        if (AOutMsg.Text <> '') then
+         MessageDlg('Post compiling status', AOutMsg.Text, mtInformation, [mbOk], 0)
+      end
+     else
+      begin
+        bCompilingError:= True;
+        MessageDlg('Post compiler status', AOutMsg.Text + AErrMsg.Text, mtError, [mbOK], 0);
+      end;
+
+     AErrMsg.Destroy();
+     AOutMsg.Destroy();
+     hProcess.Destroy();
    end;
-
-  //Check if all compiler params are filled
-  if (ACompilerPath = '') or (AParams = NIL) then
-   begin
-     MessageDlg('Error', msgERR01, mtError, [mbOK], 0);
-     Exit;
-   end;
-
-  bOK:= False;
-
 
      {
   if (bOK) then
