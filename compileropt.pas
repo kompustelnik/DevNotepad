@@ -67,10 +67,13 @@ begin
   for i:= Low(AParamArray) to High(AParamArray) do
    begin
      // $(sourcefilepath) flag
-     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilepath)', FileDirectory, [rfReplaceAll]);
+     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilepath)', ExtractFilePath(FileDirectory), [rfReplaceAll]);
+
+     // $(sourcefile) flag
+     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefile)', FileDirectory, [rfReplaceAll]);
 
      // $(sourcefilename) flag
-     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilename)', ChangeFileExt(FileDirectory, ''), [rfReplaceAll])
+     APAramArray[i]:= StringReplace(AParamArray[i], '$(sourcefilename)', ChangeFileExt(ExtractFileName(FileDirectory), ''), [rfReplaceAll]);
    end;
 
   Result:= AParamArray;;
