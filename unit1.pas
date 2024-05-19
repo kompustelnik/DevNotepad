@@ -372,6 +372,8 @@ begin
      hProcess.Destroy();
    end;
 
+  miMessages.Click;
+
   Ini.Destroy();
 end;
 
