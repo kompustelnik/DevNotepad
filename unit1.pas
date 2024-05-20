@@ -194,7 +194,7 @@ end;
 
 procedure TForm1.SetupStatusCursor();
 begin
-  sbBar.Panels[0].Text:= Format('[%d: %d]', [seTextField.CaretX, seTextField.CaretY]);
+  sbBar.Panels[0].Text:= Format('[%d: %d]', [seTextField.CaretY, seTextField.CaretX]);
 end;
 
 procedure TForm1.SetupHighlighter();
